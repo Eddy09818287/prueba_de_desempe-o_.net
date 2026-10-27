@@ -1,0 +1,132 @@
+@model IEnumerable<SkillHubeduardo.Application.DTOs.WorkshopResponse>
+@{
+    ViewData["Title"] = "Catálogo de Talleres";
+    var isEmployee = User.Identity != null && User.Identity.IsAuthenticated && User.IsInRole("Employee");
+}
+
+@if (isEmployee)
+{
+    <!-- Employee Admin Header Banner -->
+    <div class="hero-section hero-section-employee px-4 px-md-5 mb-4">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <span class="badge bg-warning text-dark fw-bold px-3 py-2 rounded-pill mb-2">
+                    <i class="bi bi-shield-check me-1"></i> Modo Instructor / Gestión de Talleres
+                </span>
+                <h2 class="display-6 fw-bold mb-2">Panel de Administración de Talleres</h2>
+                <p class="text-white-50 lead fs-6 mb-3">Puedes publicar nuevos talleres, consultar los participantes inscritos en cada uno, revisar el reporte de demanda e importar listas masivas de Excel.</p>
+                
+                <div class="d-flex flex-wrap gap-2">
+                    <a href="/Workshops/Create" class="btn btn-warning fw-bold px-3 py-2 rounded-pill">
+                        <i class="bi bi-plus-circle me-1"></i> Publicar Nuevo Taller
+                    </a>
+                    <a href="/Workshops/TopReport" class="btn btn-outline-light px-3 py-2 rounded-pill">
+                        <i class="bi bi-bar-chart me-1"></i> Ver Reporte Top Talleres
+                    </a>
+                    <a href="/Enrollments/Import" class="btn btn-outline-light px-3 py-2 rounded-pill">
+                        <i class="bi bi-file-earmark-excel me-1"></i> Cargar Inscripciones desde Excel
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-4 text-end d-none d-lg-block">
+                <i class="bi bi-person-workspace display-1 text-white opacity-25"></i>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <!-- Participant Hero Banner -->
+    <div class="hero-section px-4 px-md-5 mb-4">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <span class="badge bg-white text-primary fw-bold px-3 py-2 rounded-pill mb-3">
+                    <i class="bi bi-stars text-warning me-1"></i> Formación Presencial & Práctica
+                </span>
+                <h1 class="display-6 fw-bold mb-2">Desarrolla nuevas habilidades con nuestros talleres</h1>
+                <p class="text-white-50 lead fs-6 mb-0">Explora la oferta de talleres en fotografía, cocina, diseño, música y comunicación. Elige tu horario y asegura tu cupo.</p>
+            </div>
+            <div class="col-lg-4 text-end d-none d-lg-block">
+                <i class="bi bi-palette2 display-1 text-white opacity-25"></i>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- Section Header -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h3 class="fw-bold text-dark mb-0">Talleres Disponibles</h3>
+        <p class="text-muted small mb-0">Cupos actualizados en tiempo real</p>
+    </div>
+    <span class="badge bg-light text-secondary border px-3 py-2 rounded-pill font-monospace">
+        @Model.Count() talleres activos
+    </span>
+</div>
+
+<!-- Cards Grid -->
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+    @foreach (var item in Model)
+    {
+        <div class="col">
+            <div class="workshop-card">
+                <div class="card-top-bar" style="@(isEmployee ? "background: linear-gradient(90deg, #f59e0b, #4f46e5);" : "")"></div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="badge-code font-monospace">@item.Code</span>
+                        @if (item.AvailableSpots > 0)
+                        {
+                            <span class="badge-spots badge-spots-available">
+                                <i class="bi bi-people-fill me-1"></i> @item.AvailableSpots cupos libres
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="badge-spots badge-spots-full">
+                                <i class="bi bi-slash-circle me-1"></i> Agotado
+                            </span>
+                        }
+                    </div>
+
+                    <h5 class="fw-bold text-dark mb-2">@item.Title</h5>
+                    <p class="text-muted small mb-4 flex-grow-1" style="min-height: 48px;">
+                        @(item.Description.Length > 120 ? item.Description.Substring(0, 117) + "..." : item.Description)
+                    </p>
+
+                    <div class="p-3 bg-light rounded-3 mb-3 small">
+                        <div class="d-flex align-items-center text-secondary mb-2">
+                            <i class="bi bi-person-badge-fill text-primary me-2 fs-6"></i>
+                            <span class="text-truncate"><strong>Instructor:</strong> @item.InstructorName</span>
+                        </div>
+                        <div class="d-flex align-items-center text-secondary mb-1">
+                            <i class="bi bi-calendar-event text-primary me-2"></i>
+                            <span>@item.StartDate.ToString("dd MMM yyyy, HH:mm")</span>
+                        </div>
+                        <div class="d-flex align-items-center text-muted">
+                            <i class="bi bi-clock-history text-secondary me-2"></i>
+                            <span>Hasta @item.EndDate.ToString("HH:mm") (Cupo total: @item.MaxCapacity)</span>
+                        </div>
+                    </div>
+
+                    <div class="d-flex flex-column gap-2 mt-auto">
+                        @if (isEmployee)
+                        {
+                            <a href="/Workshops/Attendees/@item.Id" class="btn btn-warning fw-bold w-100 text-center">
+                                <i class="bi bi-people-fill me-1"></i> Ver Inscritos
+                            </a>
+                            <a href="/Workshops/Details/@item.Id" class="btn btn-outline-secondary btn-sm w-100 text-center">
+                                Ver Detalle
+                            </a>
+                        }
+                        else
+                        {
+                            <a href="/Workshops/Details/@item.Id" class="btn btn-outline-brand w-100 text-center">
+                                Ver Detalles e Inscribirse <i class="bi bi-arrow-right ms-1"></i>
+                            </a>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>

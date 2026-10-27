@@ -1,0 +1,93 @@
+@model SkillHubeduardo.Application.DTOs.WorkshopResponse
+@{
+    ViewData["Title"] = Model.Title;
+    var isAuth = User.Identity != null && User.Identity.IsAuthenticated;
+    var isEmployee = isAuth && User.IsInRole("Employee");
+    var isParticipant = isAuth && User.IsInRole("Participant");
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-9">
+        <nav aria-label="breadcrumb" class="mb-3">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/Workshops" class="text-decoration-none">Catálogo</a></li>
+                <li class="breadcrumb-item active" aria-current="page">@Model.Code</li>
+            </ol>
+        </nav>
+
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
+            <div class="p-4 p-md-5 text-white" style="background: linear-gradient(135deg, #1e1b4b, #4338ca);">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <span class="badge bg-white text-primary font-monospace px-3 py-2 rounded-pill fw-bold">@Model.Code</span>
+                    @if (Model.AvailableSpots > 0)
+                    {
+                        <span class="badge bg-success text-white px-3 py-2 rounded-pill fw-semibold">
+                            <i class="bi bi-check-circle me-1"></i> @Model.AvailableSpots cupos disponibles
+                        </span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-danger text-white px-3 py-2 rounded-pill fw-semibold">Agotado</span>
+                    }
+                </div>
+                <h2 class="display-6 fw-bold mb-3">@Model.Title</h2>
+                <p class="lead fs-6 text-white-50 mb-0">@Model.Description</p>
+            </div>
+
+            <div class="card-body p-4 p-md-5">
+                <h5 class="fw-bold mb-4 text-dark border-bottom pb-2">Información del Taller</h5>
+
+                <div class="row g-4 mb-5">
+                    <div class="col-md-6">
+                        <div class="p-3 rounded-3 border bg-light h-100">
+                            <div class="text-primary small fw-bold text-uppercase mb-1"><i class="bi bi-person-video3 me-1"></i> Instructor a cargo</div>
+                            <h6 class="fw-bold mb-1">@Model.InstructorName</h6>
+                            <div class="text-muted small">@Model.InstructorEmail</div>
+                            @if (!string.IsNullOrEmpty(Model.InstructorSpecialty))
+                            {
+                                <span class="badge bg-primary-subtle text-primary mt-2">@Model.InstructorSpecialty</span>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="p-3 rounded-3 border bg-light h-100">
+                            <div class="text-primary small fw-bold text-uppercase mb-1"><i class="bi bi-clock me-1"></i> Horario y Capacidad</div>
+                            <div class="small mb-1"><strong>Inicio:</strong> @Model.StartDate.ToString("dddd, dd/MM/yyyy HH:mm")</div>
+                            <div class="small mb-2"><strong>Fin:</strong> @Model.EndDate.ToString("dddd, dd/MM/yyyy HH:mm")</div>
+                            <div class="small text-muted"><strong>Capacidad Total:</strong> @Model.MaxCapacity participantes</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center gap-3 pt-3 border-top">
+                    <a href="/Workshops" class="btn btn-outline-secondary px-4 rounded-pill">
+                        <i class="bi bi-arrow-left me-1"></i> Volver al Catálogo
+                    </a>
+
+                    @if (isParticipant)
+                    {
+                        <form asp-controller="Enrollments" asp-action="Enroll" method="post" class="m-0">
+                            <input type="hidden" name="workshopId" value="@Model.Id" />
+                            <button type="submit" class="btn btn-brand btn-lg px-4 rounded-pill" @(Model.AvailableSpots <= 0 ? "disabled" : "")>
+                                <i class="bi bi-check2-circle me-1"></i> Inscribirme a este Taller
+                            </button>
+                        </form>
+                    }
+                    else if (isEmployee)
+                    {
+                        <a href="/Workshops/Attendees/@Model.Id" class="btn btn-warning btn-lg px-4 rounded-pill fw-bold">
+                            <i class="bi bi-people-fill me-1"></i> Ver Participantes Inscritos
+                        </a>
+                    }
+                    else
+                    {
+                        <a href="/Account/Login" class="btn btn-brand btn-lg px-4 rounded-pill">
+                            <i class="bi bi-box-arrow-in-right me-1"></i> Iniciar Sesión para Inscribirte
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

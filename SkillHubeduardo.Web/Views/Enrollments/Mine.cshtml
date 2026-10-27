@@ -1,0 +1,96 @@
+@model IEnumerable<SkillHubeduardo.Application.DTOs.EnrollmentResponse>
+@{
+    ViewData["Title"] = "Mis Inscripciones";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h3 class="fw-bold text-dark mb-1">Mis Inscripciones</h3>
+        <p class="text-muted small mb-0">Gestiona los talleres en los que estás inscrito y descarga tu constancia oficial en PDF.</p>
+    </div>
+    <a href="/Workshops" class="btn btn-outline-brand rounded-pill btn-sm">
+        <i class="bi bi-plus-lg me-1"></i> Explorar Más Talleres
+    </a>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="card border-0 shadow-sm rounded-4 p-5 text-center bg-white">
+        <i class="bi bi-journal-x display-4 text-muted mb-3"></i>
+        <h5 class="fw-bold">No tienes inscripciones registradas</h5>
+        <p class="text-muted small">Aún no te has inscrito a ningún taller. Revisa nuestro catálogo y asegura tu cupo.</p>
+        <div>
+            <a href="/Workshops" class="btn btn-brand rounded-pill px-4">Ver Talleres Disponibles</a>
+        </div>
+    </div>
+}
+else
+{
+    <div class="custom-table-container">
+        <div class="table-responsive">
+            <table class="table custom-table">
+                <thead>
+                    <tr>
+                        <th>Código</th>
+                        <th>Taller</th>
+                        <th>Instructor</th>
+                        <th>Fechas</th>
+                        <th>Estado</th>
+                        <th class="text-end">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var e in Model)
+                    {
+                        <tr>
+                            <td><span class="badge-code font-monospace">@e.WorkshopCode</span></td>
+                            <td>
+                                <div class="fw-bold text-dark">@e.WorkshopTitle</div>
+                                <div class="text-muted" style="font-size: 0.75rem;">Inscrito el: @e.EnrolledAt.ToString("dd/MM/yyyy HH:mm")</div>
+                            </td>
+                            <td class="small">@e.InstructorName</td>
+                            <td class="small">
+                                <div><i class="bi bi-calendar-event text-primary me-1"></i> @e.WorkshopStartDate.ToString("dd/MM/yyyy HH:mm")</div>
+                                <div class="text-muted"><i class="bi bi-clock me-1"></i> @e.WorkshopEndDate.ToString("HH:mm")</div>
+                            </td>
+                            <td>
+                                @if (e.Status == "Active")
+                                {
+                                    <span class="badge-spots badge-spots-available">
+                                        <i class="bi bi-check-circle me-1"></i> Activa
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge-spots badge-spots-full">
+                                        <i class="bi bi-x-circle me-1"></i> Cancelada
+                                    </span>
+                                }
+                            </td>
+                            <td class="text-end">
+                                <div class="d-inline-flex gap-2">
+                                    @if (e.Status == "Active")
+                                    {
+                                        <a href="/Enrollments/DownloadCertificate/@e.Id" class="btn btn-sm btn-outline-primary rounded-pill px-3" title="Descargar Constancia en PDF">
+                                            <i class="bi bi-file-earmark-pdf me-1"></i> Constancia PDF
+                                        </a>
+                                        <form asp-action="Cancel" method="post" onsubmit="return confirm('¿Seguro que deseas cancelar tu inscripción a este taller?');" class="d-inline">
+                                            <input type="hidden" name="id" value="@e.Id" />
+                                            <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill px-3" title="Cancelar inscripción">
+                                                <i class="bi bi-x-lg me-1"></i> Cancelar
+                                            </button>
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted small fst-italic">Cupo liberado</span>
+                                    }
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}

@@ -1,0 +1,77 @@
+@model SkillHubeduardo.Application.DTOs.CreateWorkshopRequest
+@{
+    ViewData["Title"] = "Publicar Taller";
+}
+
+<div class="row justify-content-center my-4">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm rounded-4 bg-white p-4 p-md-5">
+            <div class="d-flex align-items-center gap-3 mb-4 border-bottom pb-3">
+                <div class="p-3 rounded-circle bg-warning-subtle text-warning">
+                    <i class="bi bi-plus-square-fill fs-3 text-warning"></i>
+                </div>
+                <div>
+                    <h4 class="fw-bold mb-1">Publicar Nuevo Taller</h4>
+                    <p class="text-muted small mb-0">Solo instructores y empleados pueden publicar talleres en la plataforma.</p>
+                </div>
+            </div>
+
+            @if (ViewBag.Error != null)
+            {
+                <div class="alert alert-danger border-0 small rounded-3 py-2 mb-4">
+                    <i class="bi bi-exclamation-circle me-1"></i> @ViewBag.Error
+                </div>
+            }
+
+            <form method="post" asp-action="Create">
+                <div class="row g-3 mb-3">
+                    <div class="col-md-4">
+                        <label class="form-label small fw-bold text-secondary">Código Único (ej. FOT-004)</label>
+                        <input type="text" name="Code" class="form-control" placeholder="FOT-004" required />
+                    </div>
+                    <div class="col-md-8">
+                        <label class="form-label small fw-bold text-secondary">Título del Taller</label>
+                        <input type="text" name="Title" class="form-control" placeholder="Nombre completo del taller" required />
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label small fw-bold text-secondary">Descripción</label>
+                    <textarea name="Description" class="form-control" rows="3" placeholder="Objetivos y temas prácticos del taller" required></textarea>
+                </div>
+
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label small fw-bold text-secondary">Correo del Instructor Responsable</label>
+                        <input type="email" name="InstructorEmail" class="form-control" placeholder="andres.mejia@correo.com" required />
+                        <small class="text-muted">El instructor debe existir registrado en la plataforma.</small>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label small fw-bold text-secondary">Cupo Máximo</label>
+                        <input type="number" name="MaxCapacity" class="form-control" min="1" max="100" value="15" required />
+                    </div>
+                </div>
+
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <label class="form-label small fw-bold text-secondary">Fecha y Hora de Inicio</label>
+                        <input type="datetime-local" name="StartDate" class="form-control" required />
+                        <small class="text-muted">Debe ser una fecha futura.</small>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label small fw-bold text-secondary">Fecha y Hora de Finalización</label>
+                        <input type="datetime-local" name="EndDate" class="form-control" required />
+                        <small class="text-muted">Debe ser posterior a la fecha de inicio.</small>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+                    <a href="/Workshops" class="btn btn-outline-secondary rounded-pill px-4">Cancelar</a>
+                    <button type="submit" class="btn btn-brand rounded-pill px-4 fw-bold">
+                        <i class="bi bi-cloud-arrow-up me-1"></i> Publicar Taller
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

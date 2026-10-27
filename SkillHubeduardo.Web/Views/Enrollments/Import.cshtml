@@ -1,0 +1,50 @@
+@{
+    ViewData["Title"] = "Importar Inscripciones desde Excel";
+}
+
+<div class="row justify-content-center my-4">
+    <div class="col-lg-7">
+        <div class="card border-0 shadow-sm rounded-4 bg-white p-4 p-md-5">
+            <div class="d-flex align-items-center gap-3 mb-4 border-bottom pb-3">
+                <div class="p-3 rounded-circle bg-success-subtle text-success">
+                    <i class="bi bi-file-earmark-excel-fill fs-3 text-success"></i>
+                </div>
+                <div>
+                    <h4 class="fw-bold mb-1">Cargar Inscripciones Masivas</h4>
+                    <p class="text-muted small mb-0">Sube un archivo Excel (.xlsx) con las columnas <code>ParticipantEmail</code> y <code>WorkshopCode</code>.</p>
+                </div>
+            </div>
+
+            @if (ViewBag.Error != null)
+            {
+                <div class="alert alert-danger border-0 small rounded-3 py-2 mb-4">
+                    <i class="bi bi-exclamation-circle me-1"></i> @ViewBag.Error
+                </div>
+            }
+
+            <div class="alert alert-info border-0 rounded-3 small mb-4">
+                <i class="bi bi-info-circle-fill me-1"></i> <strong>Reglas de Negocio en la Importación:</strong>
+                <ul class="mb-0 mt-2 ps-3">
+                    <li>Cada fila se valida individualmente (cupo, cruce de horario, sin duplicados y talleres futuros).</li>
+                    <li>Si el participante o el taller no existen, la fila se rechaza.</li>
+                    <li>Las filas válidas se guardan aunque otras fallen.</li>
+                </ul>
+            </div>
+
+            <form method="post" asp-action="Import" enctype="multipart/form-data">
+                <div class="mb-4">
+                    <label class="form-label small fw-bold text-secondary">Seleccionar Archivo Excel (.xlsx)</label>
+                    <input type="file" name="excelFile" class="form-control" accept=".xlsx" required />
+                    <small class="text-muted">Puedes usar la hoja <code>Enrollments</code> de <code>SkillHub_Data.xlsx</code>.</small>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+                    <a href="/Workshops" class="btn btn-outline-secondary rounded-pill px-4">Cancelar</a>
+                    <button type="submit" class="btn btn-success rounded-pill px-4 fw-bold">
+                        <i class="bi bi-upload me-1"></i> Procesar Archivo Excel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

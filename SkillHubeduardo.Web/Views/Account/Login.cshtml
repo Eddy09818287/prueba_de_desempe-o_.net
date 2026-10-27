@@ -1,0 +1,47 @@
+@{
+    ViewData["Title"] = "Iniciar Sesión";
+}
+
+<div class="row justify-content-center my-5">
+    <div class="col-md-5 col-lg-4">
+        <div class="card border-0 shadow-sm rounded-4 bg-white p-4 p-md-5">
+            <div class="text-center mb-4">
+                <div class="d-inline-flex p-3 rounded-circle bg-primary-subtle text-primary mb-3">
+                    <i class="bi bi-person-lock fs-2"></i>
+                </div>
+                <h4 class="fw-bold mb-1">Bienvenido</h4>
+                <p class="text-muted small">Ingresa tus credenciales para continuar</p>
+            </div>
+
+            @if (ViewBag.Error != null)
+            {
+                <div class="alert alert-danger border-0 small rounded-3 py-2">
+                    <i class="bi bi-exclamation-circle me-1"></i> @ViewBag.Error
+                </div>
+            }
+
+            <form method="post" asp-action="Login">
+                <div class="mb-3">
+                    <label class="form-label small fw-bold text-secondary">Correo Electrónico</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0"><i class="bi bi-envelope text-muted"></i></span>
+                        <input type="email" name="email" class="form-control border-start-0 ps-0" placeholder="correo@ejemplo.com" required />
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <label class="form-label small fw-bold text-secondary">Contraseña</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0"><i class="bi bi-lock text-muted"></i></span>
+                        <input type="password" name="password" class="form-control border-start-0 ps-0" placeholder="••••••••" required />
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-brand w-100 py-2 rounded-pill">Iniciar Sesión</button>
+            </form>
+
+            <div class="text-center mt-4 pt-3 border-top">
+                <span class="text-muted small">¿Aún no tienes cuenta?</span><br />
+                <a href="/Account/Register" class="small fw-bold text-decoration-none">Regístrate como participante</a>
+            </div>
+        </div>
+    </div>
+</div>
